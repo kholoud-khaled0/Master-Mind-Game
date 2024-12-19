@@ -3,12 +3,14 @@ package master;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
 import javafx.util.Duration;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,7 +19,7 @@ import java.util.Random;
 
 public class GameController {
     private static final int CODE_LENGTH = 4;
-    private static final int MAX_ATTEMPTS = 10;
+    private int MAX_ATTEMPTS;
     private List<Color> colors = Arrays.asList(
             Color.CORNFLOWERBLUE, Color.GREEN, Color.PINK, Color.PURPLE, Color.BLUE, Color.RED
     );
@@ -33,9 +35,11 @@ public class GameController {
     private Label timerLabel;
     private Label resultLabel;
 
-    public GameController() {
-        attempts = 0;
+    public GameController(int maxAttempts) {
+        this.attempts = 0;
+        this.MAX_ATTEMPTS = maxAttempts;
         generateSecretCode();
+        startTimer(); // Start the timer when the game controller is initialized
     }
 
     public VBox createGameLayout() {
@@ -49,7 +53,7 @@ public class GameController {
         Label titleLabel = new Label("✨ Welcome to MasterMind ✨");
         titleLabel.setFont(new javafx.scene.text.Font("Arial", 24));
         titleLabel.setTextFill(Color.BLACK);
-        Label instructionsLabel = new Label("Select 4 colors to uncover the secret code.\nYou have 10 attempts to guess correctly.");
+        Label instructionsLabel = new Label("Select 4 colors to uncover the secret code.\nYou have " + MAX_ATTEMPTS + " attempts to guess correctly.");
         instructionsLabel.setFont(new javafx.scene.text.Font("Verdana", 14));
         instructionsLabel.setTextFill(Color.BLACK);
         guessGrid = new GridPane();
@@ -78,7 +82,7 @@ public class GameController {
         return mainLayout;
     }
 
-    public void startTimer() {
+    private void startTimer() {
         timer = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
             seconds++;
             if (seconds == 60) {
@@ -145,9 +149,6 @@ public class GameController {
                 String secretColors = getSecretCodeAsString(secretCode);
                 feedbackLabel.setText("Oops😓! You’ve run out of attempts. The code was: \n " + secretColors);
                 feedbackLabel.setTextFill(Color.web("#FF0000"));
-
-
-
                 endGame(false);
             }
         }
@@ -161,7 +162,6 @@ public class GameController {
         } else {
             resultLabel.setText("You lost after " + String.format("%02d:%02d", minutes, seconds));
             resultLabel.setTextFill(Color.web("#FF0000"));
-
         }
     }
 
